@@ -1,0 +1,28 @@
+﻿<Properties StartupItem="Assembly-CSharp.csproj">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Maze\Scripts\Foundation\Map\Mesh.cs">
+    <Files>
+      <File FileName="Assets\Maze\Scripts\Foundation\Map\Mesh.cs" Line="25" Column="17" />
+      <File FileName="Assets\Maze\Scripts\Foundation\AStar\ASGridNode.cs" Line="7" Column="36" />
+      <File FileName="Assets\Maze\Scripts\Foundation\AStar\AStarNode.cs" Line="8" Column="1" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore>
+      <Breakpoint file="D:\proj-unity\2d\Assets\Scripts\MazeGeneration.cs" line="115" column="1" />
+      <Breakpoint file="D:\proj-unity\2d\Assets\Scripts\Control\Maze\MazeAI.cs" line="176" column="1" />
+      <Breakpoint file="D:\proj-unity\2d\Assets\LocomotionPackage\Scripts\MixamoMaleLocomotionControlScript.cs" line="70" column="1" />
+      <Breakpoint file="D:\proj-unity\2d\Assets\Maze\Scripts\View\3D\MazeNpcModel.cs" line="126" column="1" />
+      <Breakpoint file="D:\proj-unity\2d\Assets\Standard Assets\Characters\FirstPersonCharacter\Scripts\RigidbodyFirstPersonController.cs" line="148" column="1" />
+      <Breakpoint file="D:\proj-unity\2d\Assets\Standard Assets\Characters\RollerBall\Scripts\BallUserControl.cs" line="45" column="1" />
+      <Breakpoint file="D:\proj-unity\2d\Assets\Standard Assets\Characters\ThirdPersonCharacter\Scripts\ThirdPersonUserControl.cs" line="51" column="1" />
+      <Breakpoint file="D:\proj-unity\2d\Assets\Rally_course\Code\FreeflightCamera.cs" line="35" column="1" />
+      <Breakpoint file="D:\proj-unity\2d\Assets\Standard Assets\CrossPlatformInput\Scripts\Joystick.cs" line="64" column="1" />
+      <Breakpoint file="D:\proj-unity\2d\Assets\Standard Assets\CrossPlatformInput\Scripts\Joystick.cs" line="69" column="1" />
+      <Breakpoint file="D:\proj-unity\2d\Assets\Standard Assets\Characters\FirstPersonCharacter\Scripts\RigidbodyFirstPersonController.cs" line="30" column="1" />
+      <Breakpoint file="D:\proj-unity\2d\Assets\Standard Assets\Utility\SimpleMouseRotator.cs" line="52" column="1" />
+      <Breakpoint file="D:\proj-unity\2d\Assets\Rally_course\Code\FreeflightCamera.cs" line="28" column="1" />
+    </BreakpointStore>
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
