@@ -200,7 +200,7 @@ public class RandomizedPrimMaze : Maze
 			height -= 1;
 		}
 
-		// 设置起点为目标个
+		// 设置起点为目标
 		var x = (int)originPos.x;
 		var y = (int)originPos.y;
 		_map[y, x] = PathMark.Walkable;
@@ -209,14 +209,14 @@ public class RandomizedPrimMaze : Maze
 		var rpBlockPos = new List<MazeBlock>();
 
 		// 如果左方有临墙，将临墙加入列表
-		if (x  > 1)
+		if (x  > 0)
 		{
 			var block = new MazeBlock(y, x - 1, BlockDirection.Left);
 			rpBlockPos.Add(block);
 		}
 
 		// 如果下方有临墙，将临墙加入列表
-		if (y > 1)
+		if (y > 0)
 		{
 			var block = new MazeBlock(y - 1, x, BlockDirection.Down);
 			rpBlockPos.Add(block);
@@ -267,20 +267,20 @@ public class RandomizedPrimMaze : Maze
 			}
 
 			//如果目标墙尚未联通
-			if (_map[y, x] == 0)
+			if (_map[y, x] == PathMark.NotWalkable)
 			{
 				// 连通目标墙
 				_map[rpBlockPos[blockIndex].y, rpBlockPos[blockIndex].x] = PathMark.Walkable;
 				_map [y, x] = PathMark.Walkable;
 
 				// 添加目标墙的临墙
-				if (x >= 1 && _map[y, x - 1] == PathMark.NotWalkable)
+				if (x > 0 && _map[y, x - 1] == PathMark.NotWalkable)
 				{
 					var block = new MazeBlock(y, x - 1, BlockDirection.Left);
 					rpBlockPos.Add(block);
 				}
 
-				if (y >= 1 && _map[y - 1, x] == PathMark.NotWalkable)
+				if (y > 0 && _map[y - 1, x] == PathMark.NotWalkable)
 				{
 					var block = new MazeBlock(y - 1, x, BlockDirection.Down);
 					rpBlockPos.Add(block);
@@ -450,7 +450,7 @@ public class RecursiveDivisionMaze : Maze
 	}
 	/// <summary>
 	/// 十字分割法生成的迷宫会形成一个一个大小不一的“房间”，适合制作RPG游戏地图。
-	/// 起生成原理及递归法，
+	/// 生成原理及递归法，
 	/// 先画一个十字分成四个部分，在三面墙上打洞，再在每个子部分中重复这一步骤，直至空间不够分割（这个值需要我们自行设置）
 	/// 
 	/// 奇数行开洞，偶数行设墙

@@ -81,31 +81,31 @@ public class MazeNPC : MazeRoleBehaviour
 		Vector3 position =  this.transform.position;
 		Quaternion rotation = this.transform.rotation;
 		if (position == nextPosition) {
-			position = nextPosition;
-			this.transform.position = position;
+			//position = nextPosition;
+			//this.transform.position = position;
 
 			Point2d.x = position.x - Offset3d.x;
 			Point2d.y = position.z - Offset3d.z;
 			// 位置问题
 			MazeManager.Instance.UpdateRolePath (this, Point2d, Point2d);
 
+			// 其他角色行走的路线
 			Dictionary<int, Line> rolePath = MazeManager.Instance.RolePath;
+			// 待排除的路线
 			List<Line> excludeLines = new List<Line> ();
 			foreach (var item in rolePath) {
 				if (item.Key != this.mark) {
-					Debug.LogFormat ("{0}, Src {1}, Dest{2}", item.Key, item.Value.src, item.Value.dest);
 					excludeLines.Add (item.Value);
 				}
 			}
-			Debug.LogFormat ("{0}, Cur Point {1}", mark, Point2d);
+			// 获取下个位置
 			Vector2 np = ai.GetNextPoint (Point2d, excludeLines);
-			Debug.LogFormat ("{0}, Next Point {1}", mark, np);
 			if (np == Point2d) {
 				this.Pause ();
 				Invoke ("Resume", 1f);
 				return;
 			}
-
+			// 更新线路
 			MazeManager.Instance.UpdateRolePath (this, Point2d, np);
 
 			nextPosition.x = np.x + Offset3d.x;

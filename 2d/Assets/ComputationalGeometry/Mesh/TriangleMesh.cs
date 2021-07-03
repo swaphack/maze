@@ -13,7 +13,6 @@ public class TriangleMesh
 {
 	public class MeshNode
 	{
-
 		/// <summary>
 		/// 索引
 		/// </summary>
@@ -58,8 +57,6 @@ public class TriangleMesh
 			_meshNodes.Add(new MeshNode(i, vertices[i]));
         }
 	}
-
-
 
 	/// <summary>
 	/// 获取距离

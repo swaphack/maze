@@ -161,7 +161,7 @@ public class MazeManager
 
 	public MazeManager ()
 	{
-		_maze = new RecursiveDivisionMaze ();
+		_maze = new RecursiveDivisionMaze();
 		_walkablePath = new HashSet<Vector2> ();
 		_roles = new List<MazeRoleBehaviour> ();
 		_rolePath = new Dictionary<int, Line> ();
@@ -169,7 +169,8 @@ public class MazeManager
 
 	public void Init()
 	{
-		LoopListener.MaxLoopCount = Width * Height / 2;
+		//LoopListener.MaxLoopCount = Width * Height / 2;
+		LoopListener.MaxLoopCount = Width * Height;
 
 		_maze.GenerateMaze (Width, Height, new Vector2(1,1));
 		_rolePath.Clear ();

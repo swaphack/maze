@@ -50,7 +50,7 @@ public class AStarPath
 	/// <param name="straightCost">Straight cost.</param>
 	public static float GetManhattanDistance (Vector2 startNode, Vector2 endNode, float straightCost)
 	{
-		return Math.Abs (startNode.x - endNode.x) * straightCost + Math.Abs (startNode.y + endNode.y) * straightCost;
+		return (Math.Abs(startNode.x - endNode.x) + Math.Abs(startNode.y - endNode.y)) * straightCost;
 	}
 
 	/// <summary>
