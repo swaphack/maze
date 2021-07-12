@@ -64,18 +64,35 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\ComputationalGeometry\Convex\ConvexHull.cs" />
-    <Compile Include="Assets\ComputationalGeometry\Mesh\MeshCreator.cs" />
-    <Compile Include="Assets\ComputationalGeometry\Mesh\TriangleMesh.cs" />
-    <Compile Include="Assets\ComputationalGeometry\Sample\ConvexHullSample.cs" />
-    <Compile Include="Assets\ComputationalGeometry\Sample\PathNode.cs" />
+    <Compile Include="Assets\CG\Convex\ConvexHull.cs" />
+    <Compile Include="Assets\CG\DelaunayVoronoi\Delaunay.cs" />
+    <Compile Include="Assets\CG\DelaunayVoronoi\Edge.cs" />
+    <Compile Include="Assets\CG\DelaunayVoronoi\Point.cs" />
+    <Compile Include="Assets\CG\DelaunayVoronoi\Triangle.cs" />
+    <Compile Include="Assets\CG\DelaunayVoronoi\Voronoi.cs" />
+    <Compile Include="Assets\CG\Mesh\DelaunayTriangle.cs" />
+    <Compile Include="Assets\CG\Mesh\PointRegion.cs" />
+    <Compile Include="Assets\CG\Mesh\PointSet.cs" />
+    <Compile Include="Assets\CG\Mesh\QuadTree.cs" />
+    <Compile Include="Assets\CG\Mesh\VertexHelper.cs" />
+    <Compile Include="Assets\CG\Sample\ConvexHullSample.cs" />
+    <Compile Include="Assets\CG\Sample\DelaunayTriangleSample.cs" />
+    <Compile Include="Assets\CG\Sample\DrawLineBehaviour.cs" />
+    <Compile Include="Assets\CG\Sample\DrawPointBehaviour.cs" />
+    <Compile Include="Assets\CG\Sample\PointSetSample.cs" />
+    <Compile Include="Assets\CG\Sample\VoronoiSample.cs" />
+    <Compile Include="Assets\Fractal\Scripts\Core\DiamondSquareTerrian.cs" />
+    <Compile Include="Assets\Fractal\Scripts\Core\FractalHelper.cs" />
     <Compile Include="Assets\Fractal\Scripts\Core\IFSystem.cs" />
     <Compile Include="Assets\Fractal\Scripts\Core\LSystem.cs" />
     <Compile Include="Assets\Fractal\Scripts\Core\Matrix2x2.cs" />
-    <Compile Include="Assets\Fractal\Scripts\Core\Terrian1D.cs" />
+    <Compile Include="Assets\Fractal\Scripts\Core\MidpointTerrian.cs" />
+    <Compile Include="Assets\Fractal\Scripts\Core\Quadrilateral.cs" />
+    <Compile Include="Assets\Fractal\Scripts\Demo\FractalLineBehaviour.cs" />
     <Compile Include="Assets\Fractal\Scripts\Demo\IFSystemSample.cs" />
     <Compile Include="Assets\Fractal\Scripts\Demo\LSystemSample.cs" />
-    <Compile Include="Assets\Fractal\Scripts\Demo\LineDrawBehaviour.cs" />
+    <Compile Include="Assets\Fractal\Scripts\Demo\Terrian1DSample.cs" />
+    <Compile Include="Assets\Fractal\Scripts\Demo\Terrian2DSample.cs" />
     <Compile Include="Assets\Maze\Scripts\3D\Maze\MazeMap.cs" />
     <Compile Include="Assets\Maze\Scripts\3D\Maze\MazeNpc.cs" />
     <Compile Include="Assets\Maze\Scripts\3D\Maze\MazePlayer.cs" />
@@ -107,6 +124,7 @@
     <Compile Include="Assets\Maze\Scripts\UI\Maze\MazeUI.cs" />
     <None Include="Assets\Effect\Shaders\UI\UIImageColor.shader" />
     <None Include="Assets\Effect\Shaders\Color\Simple.shader" />
+    <None Include="Assets\Effect\Shaders\Color\Terrian2d.shader" />
     <None Include="Assets\Effect\Shaders\UI\UIImageGray.shader" />
     <None Include="Assets\Effect\Shaders\Shadow\ShadowColor.shader" />
     <None Include="Assets\Effect\Shaders\Shader_Template.shader" />

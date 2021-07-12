@@ -5,7 +5,7 @@ using UnityEngine;
 /// <summary>
 /// IF系统例子
 /// </summary>
-public class IFSystemSample : LineDrawBehaviour
+public class IFSystemSample : FractalLineBehaviour
 {
     private IFSystem system = new IFSystem();
     /// <summary>
@@ -41,6 +41,13 @@ public class IFSystemSample : LineDrawBehaviour
         "F->F[+F][-F]"
     };
     /// <summary>
+    /// 规则概率
+    /// </summary>
+    public float[] RuleProbablitys = new float[] {
+        0.25f,
+        0.75f
+    };
+    /// <summary>
     /// 分形次数
     /// </summary>
     public int FractalCount = 4;
@@ -51,11 +58,11 @@ public class IFSystemSample : LineDrawBehaviour
         system.GenerateSymbol = GenerateSymbol;
         system.Words = Words;
         system.Rules.Clear();
-        if (Rules != null && Rules.Length > 0)
+        if (Rules != null && Rules.Length > 0 && RuleProbablitys != null && RuleProbablitys.Length == Rules.Length)
         {
-            foreach (var item in Rules)
+            for (int i = 0; i < Rules.Length; i++)
             {
-                system.AddRule(1, item);
+                system.AddRule(RuleProbablitys[i], Rules[i]);
             }
         }
         
@@ -66,7 +73,7 @@ public class IFSystemSample : LineDrawBehaviour
 
     protected void InitFractal(int count)
     {
-        vertices.Clear();
+        linePoints.Clear();
         InitCurrentNode();
         string ifsText = system.CreateText(count);
         system.ParseText(ifsText);
@@ -80,7 +87,7 @@ public class IFSystemSample : LineDrawBehaviour
     /// <param name="type"></param>
     private void OnParseWord(string type)
     {
-        if (vertices == null)
+        if (linePoints == null)
         {
             return;
         }
@@ -88,22 +95,22 @@ public class IFSystemSample : LineDrawBehaviour
         if (type == "F")
         {
             Vector3 offset = new Vector3(0, Length, 0);
-            bool empty = vertices.Count <= 0;
+            bool empty = linePoints.Count <= 0;
             if (empty)
             {
-                vertices.Add(new Vector3());
+                linePoints.Add(new Vector3());
             }
-            Vector3 startPoint = vertices[currentNode.index];
+            Vector3 startPoint = linePoints[currentNode.index];
             if (!empty)
             {
-                vertices.Add(startPoint);
+                linePoints.Add(startPoint);
             }
 
             offset = currentNode.matrix * offset;
             Vector3 endPoint = offset + startPoint;
-            vertices.Add(endPoint);
+            linePoints.Add(endPoint);
 
-            int curIndex = vertices.Count - 1;
+            int curIndex = linePoints.Count - 1;
             currentNode.index = curIndex;
         }
         else if (type == "+")
@@ -116,7 +123,7 @@ public class IFSystemSample : LineDrawBehaviour
         }
         else if (type == "[")
         {
-            if (vertices.Count > 0)
+            if (linePoints.Count > 0)
             {
                 nodeInfos.Push(currentNode);
             }

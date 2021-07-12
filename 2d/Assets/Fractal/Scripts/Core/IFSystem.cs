@@ -127,7 +127,7 @@ public class IFSystem
         foreach (var item in values)
         {
             // 闭区间
-            if (value >= temp && value <= temp + item.Probability)
+            if (value >= temp && value < temp + item.Probability)
             {
                 return item.Value;
             }
@@ -199,7 +199,7 @@ public class IFSystem
                 string subText = text.Substring(cursor, item.Key);
                 if (item.Value.Contains(subText))
                 {// 包含关键字
-                 // 获取随机生成规则
+                    // 获取随机生成规则
                     string ruleValue = GetRandomRule(subText);
                     if (!string.IsNullOrEmpty(ruleValue))
                     {
@@ -211,7 +211,6 @@ public class IFSystem
                     }
                 }
             }
-
             if (!bFind)
             {
                 cursor++;

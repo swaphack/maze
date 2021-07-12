@@ -5,7 +5,7 @@ using UnityEngine;
 /// <summary>
 /// L系统例子
 /// </summary>
-public class LSystemSample : LineDrawBehaviour
+public class LSystemSample : FractalLineBehaviour
 {
     private LSystem system = new LSystem();
     /// <summary>
@@ -55,7 +55,7 @@ public class LSystemSample : LineDrawBehaviour
 
     protected void InitFractal(int count)
     {
-        vertices.Clear();
+        linePoints.Clear();
         InitCurrentNode();
         string lsText = system.CreateText(count);
         system.ParseText(lsText);
@@ -69,7 +69,7 @@ public class LSystemSample : LineDrawBehaviour
     /// <param name="type"></param>
     private void OnParseWord(string type)
     {
-        if (vertices == null)
+        if (linePoints == null)
         {
             return;
         }
@@ -77,22 +77,22 @@ public class LSystemSample : LineDrawBehaviour
         if (type == "F")
         {
             Vector3 offset = new Vector3(0, Length, 0);
-            bool empty = vertices.Count <= 0;
+            bool empty = linePoints.Count <= 0;
             if (empty)
             {
-                vertices.Add(new Vector3());
+                linePoints.Add(new Vector3());
             }
-            Vector3 startPoint = vertices[currentNode.index];
+            Vector3 startPoint = linePoints[currentNode.index];
             if (!empty)
             {
-                vertices.Add(startPoint);
+                linePoints.Add(startPoint);
             }
 
             offset = currentNode.matrix * offset;
             Vector3 endPoint = offset + startPoint;
-            vertices.Add(endPoint);
+            linePoints.Add(endPoint);
 
-            int curIndex = vertices.Count - 1;
+            int curIndex = linePoints.Count - 1;
             currentNode.index = curIndex;
         }
         else if (type == "+")
@@ -105,7 +105,7 @@ public class LSystemSample : LineDrawBehaviour
         }
         else if (type == "[")
         {
-            if (vertices.Count > 0)
+            if (linePoints.Count > 0)
             {
                 nodeInfos.Push(currentNode);
             }
