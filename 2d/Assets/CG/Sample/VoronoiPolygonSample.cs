@@ -36,8 +36,141 @@ public class VoronoiPolygonSample : DrawLineBehaviour
         var triangulation = delaunay.BowyerWatson(points);
         DrawTriangulation(triangulation);
 
-        var vornoiPolygons = voronoi.GeneratePolygonsFromDelaunay(triangulation);
-        DrawVoronoi(vornoiPolygons);
+        var vornoiEdges = voronoi.GenerateEdgesFromDelaunay(triangulation);
+        DrawVoronoi(vornoiEdges);
+    }
+
+    void DrawVoronoi(HashSet<Edge> voronoiEdges)
+    {
+        List<Edge> rectEdges = new List<Edge>();
+        rectEdges.Add(new Edge(new Point(0, 0), new Point(Width, 0)));
+        rectEdges.Add(new Edge(new Point(Width, 0), new Point(Width, Height)));
+        rectEdges.Add(new Edge(new Point(Width, Height), new Point(0, Height)));
+        rectEdges.Add(new Edge(new Point(0, Height), new Point(0, 0)));
+
+        Rect rect = new Rect(0, 0, Width, Height);
+        if (ExpandEdge)
+        {
+            Dictionary<Point, List<Edge>> samePointEdges = new Dictionary<Point, List<Edge>>();
+            foreach (var edge in voronoiEdges)
+            {
+                if (!samePointEdges.ContainsKey(edge.Point1))
+                {
+                    samePointEdges.Add(edge.Point1, new List<Edge>());
+                }
+                samePointEdges[edge.Point1].Add(edge);
+
+                if (!samePointEdges.ContainsKey(edge.Point2))
+                {
+                    samePointEdges.Add(edge.Point2, new List<Edge>());
+                }
+                samePointEdges[edge.Point2].Add(edge);
+            }
+
+            foreach (var item in samePointEdges)
+            {
+                if (item.Value.Count == 2)
+                {
+                    if (rect.Contains(item.Key.Position))
+                    {
+                        var d0 = item.Value[0].GetDirection(item.Key);
+                        var d1 = item.Value[1].GetDirection(item.Key);
+                        var offset = (d0.normalized + d1.normalized) * (Width + Height);
+                        voronoiEdges.Add(new Edge(item.Key.Position, item.Key.Position + offset));
+                    }
+                }
+            }
+        }
+
+
+        List<Edge> allEdges = new List<Edge>();
+        HashSet<Vector3> points = new HashSet<Vector3>();
+        if (CutOffEdge)
+        {
+            foreach (var edge in voronoiEdges)
+            {
+                List<Vector2> insetctPoints = new List<Vector2>();
+                List<Vector2> otherPoints = new List<Vector2>();
+                foreach (var item in rectEdges)
+                {
+                    // 求交点
+                    Vector2 intersectPoint = Vector2.zero;
+                    if (VertexHelper.GetIntersectPoint(
+                        item.Point1.Position, item.Point2.Position,
+                        edge.Point1.Position, edge.Point2.Position,
+                        ref intersectPoint))
+                    {
+                        insetctPoints.Add(intersectPoint);
+
+                        // 剔除另一端不满足的点
+                        if (VertexHelper.GetPointPosition(edge.Point1.Position, item.Point1.Position, item.Point2.Position) == 1)
+                        {
+                            otherPoints.Add(edge.Point2.Position);
+                        }
+                        else
+                        {
+                            otherPoints.Add(edge.Point1.Position);
+                        }
+                    }
+                }
+                if (insetctPoints.Count == 2)
+                {
+                    points.Add(insetctPoints[0]);
+                    points.Add(insetctPoints[1]);
+
+                    allEdges.Add(new Edge(insetctPoints[0], insetctPoints[1]));
+                }
+                else if (insetctPoints.Count == 1 && otherPoints.Count == 1)
+                {
+                    points.Add(insetctPoints[0]);
+                    points.Add(otherPoints[0]);
+
+                    allEdges.Add(new Edge(insetctPoints[0], otherPoints[0]));
+                }
+                else
+                {
+                    //排除大区域外的点
+                    if (!rect.Contains(edge.Point1.Position)
+                        && !rect.Contains(edge.Point2.Position))
+                    {
+                        continue;
+                    }
+                    points.Add(edge.Point1.Position);
+                    points.Add(edge.Point2.Position);
+
+                    allEdges.Add(edge);
+                }
+            }
+        }
+        else
+        {
+            foreach (var edge in voronoiEdges)
+            {
+                points.Add(edge.Point1.Position);
+                points.Add(edge.Point2.Position);
+
+                allEdges.Add(edge);
+            }
+        }
+
+        points.Add(new Vector2(0, 0));
+        points.Add(new Vector2(Width, 0));
+        points.Add(new Vector2(Width, Height));
+        points.Add(new Vector2(0, Height));
+
+        List<Vector3> sortPoints = new List<Vector3>();
+        sortPoints.AddRange(points);
+
+        sortPoints.Sort((a, b) => {
+            int ret = a.x.CompareTo(b.x);
+            if (ret == 0) return -a.y.CompareTo(b.y);
+            return ret;
+        });
+
+        // 从左下角开始查找
+        HashSet<Polygon> polygons = new HashSet<Polygon>();
+
+
     }
 
     void DrawTriangulation(IEnumerable<Triangle> triangulation)
@@ -63,7 +196,7 @@ public class VoronoiPolygonSample : DrawLineBehaviour
         this.SetPoints(vertices);
     }
 
-    void DrawVoronoi(HashSet<Polygon> voronoiPolygons)
+    void DrawPolygon(HashSet<Polygon> voronoiPolygons)
     {
         Debug.LogFormat("voronoi polygon count {0}", voronoiPolygons.Count);
         List<Vector3> vertices = new List<Vector3>();

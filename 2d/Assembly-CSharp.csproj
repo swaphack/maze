@@ -68,6 +68,7 @@
     <Compile Include="Assets\CG\DelaunayVoronoi\Delaunay.cs" />
     <Compile Include="Assets\CG\DelaunayVoronoi\Edge.cs" />
     <Compile Include="Assets\CG\DelaunayVoronoi\Point.cs" />
+    <Compile Include="Assets\CG\DelaunayVoronoi\Polygon.cs" />
     <Compile Include="Assets\CG\DelaunayVoronoi\Triangle.cs" />
     <Compile Include="Assets\CG\DelaunayVoronoi\Voronoi.cs" />
     <Compile Include="Assets\CG\Mesh\DelaunayTriangle.cs" />
@@ -80,6 +81,7 @@
     <Compile Include="Assets\CG\Sample\DrawLineBehaviour.cs" />
     <Compile Include="Assets\CG\Sample\DrawPointBehaviour.cs" />
     <Compile Include="Assets\CG\Sample\PointSetSample.cs" />
+    <Compile Include="Assets\CG\Sample\VoronoiPolygonSample.cs" />
     <Compile Include="Assets\CG\Sample\VoronoiSample.cs" />
     <Compile Include="Assets\Fractal\Scripts\Core\DiamondSquareTerrian.cs" />
     <Compile Include="Assets\Fractal\Scripts\Core\FractalHelper.cs" />

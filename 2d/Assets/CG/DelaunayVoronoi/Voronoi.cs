@@ -21,18 +21,29 @@ namespace DelaunayVoronoi
             return voronoiEdges;
         }
 
-        public HashSet<Polygon> GeneratePolygonsFromDelaunay(IEnumerable<Triangle> triangulation)
+        public HashSet<Polygon> GeneratePolygonsFromDelaunay(IEnumerable<Triangle> triangulation, Rect rect)
         {
-            var voronoiPolygons = new HashSet<Polygon>();
+            var points = new HashSet<Point>();
             foreach (var triangle in triangulation)
             {
-                var polygon = new Polygon();
                 foreach (var point in triangle.Vertices)
                 {
-                    foreach (var adjacentTriangle in point.AdjacentTriangles)
+                    if (rect.Contains(point.Position)
+                        && point.Position != Vector3.zero && point.Position != new Vector3(rect.width, 0)
+                        && point.Position != new Vector3(rect.width, rect.height) && point.Position != new Vector3(0, rect.height))
                     {
-                        polygon.Add(adjacentTriangle.Circumcenter);
+                        points.Add(point);
                     }
+                }
+            }
+
+            var voronoiPolygons = new HashSet<Polygon>();
+            foreach (var point in points)
+            {
+                var polygon = new Polygon();
+                foreach (var adjacentTriangle in point.AdjacentTriangles)
+                {
+                    polygon.Add(adjacentTriangle.Circumcenter);
                 }
 
                 if (polygon.Points.Count >= 3)
