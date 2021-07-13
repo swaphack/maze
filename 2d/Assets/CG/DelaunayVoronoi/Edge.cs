@@ -35,11 +35,29 @@ namespace DelaunayVoronoi
         /// </summary>
         /// <param name="edge"></param>
         /// <returns></returns>
-        public bool IsLinkWith(Edge edge)
+        public bool IsLinkWithDirection(Edge edge)
         {
             if (edge == null) return false;
 
             return Point2 == edge.Point1 && Point1 != edge.Point2;
+        }
+
+        public bool IsLinkTo(Edge edge)
+        {
+            if (edge == null) return false;
+
+            var a = Point2 == edge.Point1 && Point1 != edge.Point2;
+            var b = Point1 == edge.Point2 && Point2 != edge.Point1;
+
+            return a || b;
+        }
+
+        public Vector3 GetDirection(Point destPoint)
+        {
+            if (Point1 == destPoint) return Point1.Position - Point2.Position;
+            else if (Point2 == destPoint) return Point2.Position - Point1.Position;
+
+            return Vector3.zero;
         }
 
         public override int GetHashCode()

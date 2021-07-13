@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 /// <summary>
 /// 凸包
@@ -19,6 +20,14 @@ public class ConvexHull
         {
             return null;
         }
+
+        // 排序
+        Array.Sort(points, (a, b) =>
+        {
+            int ret = a.x.CompareTo(b.x);
+            if (ret == 0) return -a.y.CompareTo(b.y);
+            return ret;
+        });
 
         List<Vector2> upList = new List<Vector2>();
         upList.Add(points[0]);
@@ -70,7 +79,7 @@ public class ConvexHull
         lowerList.RemoveAt(0);
         lowerList.RemoveAt(lowerList.Count - 1);
 
-        //upList.AddRange(lowerList);
+        upList.AddRange(lowerList);
 
         return upList.ToArray();
     }
@@ -91,7 +100,7 @@ public class ConvexHull
         Array.Sort(points, (a, b) =>
         {
             int ret = a.x.CompareTo(b.x);
-            if (ret > 0) return b.y.CompareTo(a.y);
+            if (ret == 0) return -a.y.CompareTo(b.y);
             return ret;
         });
 

@@ -191,13 +191,13 @@ public abstract class MazePathFind
 	/// <param name="excludeLines">Exclude nodes.</param>
 	public abstract Point GetNextPoint (Point position, List<Line> excludeLines = null);
 
-	public static bool IntersectLine(List<Line> excludeLines, Line line)
+	public static bool IntersectLine(List<Line> lines, Line line)
 	{
-		if (excludeLines == null || excludeLines.Count == 0) {
+		if (lines == null || lines.Count == 0) {
 			return false;
 		}
 
-		foreach (var item in excludeLines) {
+		foreach (var item in lines) {
 			if (item.Contains (line.src) || item.Contains (line.dest)) {
 				return true;
 			}
@@ -209,13 +209,13 @@ public abstract class MazePathFind
 		return false;
 	}
 
-	public static bool ContainPoint(List<Line> excludeLines, Point point)
+	public static bool ContainPoint(List<Line> lines, Point point)
 	{
-		if (excludeLines == null || excludeLines.Count == 0) {
+		if (lines == null || lines.Count == 0) {
 			return false;
 		}
 
-		foreach (var item in excludeLines) {
+		foreach (var item in lines) {
 			if (item.Contains (point)) {
 				return true;
 			}

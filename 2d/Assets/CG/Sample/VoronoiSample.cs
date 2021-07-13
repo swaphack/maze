@@ -17,6 +17,14 @@ public class VoronoiSample : DrawLineBehaviour
     /// 顶点数
     /// </summary>
     public int PointCount = 10;
+    /// <summary>
+    /// 扩展边
+    /// </summary>
+    public bool ExpandEdge = false;
+    /// <summary>
+    /// 去掉而外的边
+    /// </summary>
+    public bool CutOffEdge = false;
 
     private void Start()
     {
@@ -85,7 +93,7 @@ public class VoronoiSample : DrawLineBehaviour
         meshFilter.mesh = mesh;
     }
 
-    void DrawVoronoi(IEnumerable<Edge> voronoiEdges)
+    void DrawVoronoi(HashSet<Edge> voronoiEdges)
     {
         List<Edge> rectEdges = new List<Edge>();
         rectEdges.Add(new Edge(new Point(0, 0), new Point(Width, 0)));
@@ -93,58 +101,105 @@ public class VoronoiSample : DrawLineBehaviour
         rectEdges.Add(new Edge(new Point(Width, Height), new Point(0, Height)));
         rectEdges.Add(new Edge(new Point(0, Height), new Point(0, 0)));
 
-        List<Edge> allEdges = new List<Edge>();
 
         Rect rect = new Rect(0, 0, Width, Height);
-        List<Vector3> points = new List<Vector3>();
-        foreach (var edge in voronoiEdges)
+        if (ExpandEdge)
         {
-            List<Vector2> insetctPoints = new List<Vector2>();
-            List<Vector2> otherPoints = new List<Vector2>();
-            foreach (var item in rectEdges)
+            Dictionary<Point, List<Edge>> samePointEdges = new Dictionary<Point, List<Edge>>();
+            foreach (var edge in voronoiEdges)
             {
-                // 求交点
-                Vector2 intersectPoint = Vector2.zero;
-                if (VertexHelper.GetIntersectPoint( 
-                    item.Point1.Position, item.Point2.Position,
-                    edge.Point1.Position, edge.Point2.Position, 
-                    ref intersectPoint))
+                if (!samePointEdges.ContainsKey(edge.Point1))
                 {
-                    insetctPoints.Add(intersectPoint);
+                    samePointEdges.Add(edge.Point1, new List<Edge>());
+                }
+                samePointEdges[edge.Point1].Add(edge);
 
-                    // 剔除另一端不满足的点
-                    if (VertexHelper.GetPointPosition(edge.Point1.Position, item.Point1.Position, item.Point2.Position) == 1)
+                if (!samePointEdges.ContainsKey(edge.Point2))
+                {
+                    samePointEdges.Add(edge.Point2, new List<Edge>());
+                }
+                samePointEdges[edge.Point2].Add(edge);
+            }
+
+            foreach (var item in samePointEdges)
+            {
+                if (item.Value.Count == 2)
+                {
+                    if (rect.Contains(item.Key.Position))
                     {
-                        otherPoints.Add(edge.Point2.Position);
-                    }
-                    else
-                    {
-                        otherPoints.Add(edge.Point1.Position);
+                        var d0 = item.Value[0].GetDirection(item.Key);
+                        var d1 = item.Value[1].GetDirection(item.Key);
+                        var offset = (d0.normalized + d1.normalized) * (Width + Height);
+                        voronoiEdges.Add(new Edge(item.Key.Position, item.Key.Position + offset));
                     }
                 }
             }
-            if (insetctPoints.Count == 2)
-            {
-                points.Add(insetctPoints[0]);
-                points.Add(insetctPoints[1]);
+        }
 
-                allEdges.Add(new Edge(insetctPoints[0], insetctPoints[1]));
-            }
-            else if (insetctPoints.Count == 1 && otherPoints.Count == 1)
-            {
-                points.Add(insetctPoints[0]);
-                points.Add(otherPoints[0]);
 
-                allEdges.Add(new Edge(insetctPoints[0], otherPoints[0]));
-            }
-            else
+        List<Edge> allEdges = new List<Edge>();
+        List<Vector3> points = new List<Vector3>();
+        if (CutOffEdge)
+        {
+            foreach (var edge in voronoiEdges)
             {
-                //排除大区域外的点
-                if (!rect.Contains(edge.Point1.Position) 
-                    && !rect.Contains(edge.Point2.Position))
+                List<Vector2> insetctPoints = new List<Vector2>();
+                List<Vector2> otherPoints = new List<Vector2>();
+                foreach (var item in rectEdges)
                 {
-                    continue;
+                    // 求交点
+                    Vector2 intersectPoint = Vector2.zero;
+                    if (VertexHelper.GetIntersectPoint(
+                        item.Point1.Position, item.Point2.Position,
+                        edge.Point1.Position, edge.Point2.Position,
+                        ref intersectPoint))
+                    {
+                        insetctPoints.Add(intersectPoint);
+
+                        // 剔除另一端不满足的点
+                        if (VertexHelper.GetPointPosition(edge.Point1.Position, item.Point1.Position, item.Point2.Position) == 1)
+                        {
+                            otherPoints.Add(edge.Point2.Position);
+                        }
+                        else
+                        {
+                            otherPoints.Add(edge.Point1.Position);
+                        }
+                    }
                 }
+                if (insetctPoints.Count == 2)
+                {
+                    points.Add(insetctPoints[0]);
+                    points.Add(insetctPoints[1]);
+
+                    allEdges.Add(new Edge(insetctPoints[0], insetctPoints[1]));
+                }
+                else if (insetctPoints.Count == 1 && otherPoints.Count == 1)
+                {
+                    points.Add(insetctPoints[0]);
+                    points.Add(otherPoints[0]);
+
+                    allEdges.Add(new Edge(insetctPoints[0], otherPoints[0]));
+                }
+                else
+                {
+                    //排除大区域外的点
+                    if (!rect.Contains(edge.Point1.Position)
+                        && !rect.Contains(edge.Point2.Position))
+                    {
+                        continue;
+                    }
+                    points.Add(edge.Point1.Position);
+                    points.Add(edge.Point2.Position);
+
+                    allEdges.Add(edge);
+                }
+            }
+        }
+        else
+        {
+            foreach (var edge in voronoiEdges)
+            {
                 points.Add(edge.Point1.Position);
                 points.Add(edge.Point2.Position);
 
@@ -152,7 +207,7 @@ public class VoronoiSample : DrawLineBehaviour
             }
         }
 
-        points.Add(new Vector2(0,0));
+        points.Add(new Vector2(0, 0));
         points.Add(new Vector2(Width, 0));
 
         points.Add(new Vector2(Width, 0));
@@ -165,10 +220,5 @@ public class VoronoiSample : DrawLineBehaviour
         points.Add(new Vector2(0, 0));
 
         this.SetPoints(points);
-
-        foreach(var item in allEdges)
-        {
-
-        }    
     }
 }

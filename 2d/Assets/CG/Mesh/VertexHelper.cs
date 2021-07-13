@@ -46,6 +46,26 @@ public class VertexHelper
             return 1;
         }
     }
+
+    public static int CompareUp(Vector3 a, Vector3 b)
+    {
+        int cx = a.x.CompareTo(b.x);
+        int cy = a.y.CompareTo(b.y);
+        if (cx < 0)
+        {
+            return cx;
+        }
+        else if (cx == 0)
+        {
+            if (cy > 0) return -1;
+            else if (cy == 0) return 0;
+            else return 1;
+        }
+        else
+        {
+            return 1;
+        }
+    }
     /// <summary>
     /// 获取边
     /// </summary>

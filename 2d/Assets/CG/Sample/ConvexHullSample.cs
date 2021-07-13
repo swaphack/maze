@@ -38,15 +38,11 @@ public class ConvexHullSample : DrawLineBehaviour
             randomPoints[i] = new Vector2(x, y);
         }
 
-
-        // 排序
         Array.Sort(randomPoints, (a, b) =>
         {
-            int ca = a.x.CompareTo(b.x);
-            int cb = b.y.CompareTo(a.y);
-            if (ca <= 0) return ca;
-            else if (cb >= 0) return -cb;
-            return ca;
+            int ret = a.x.CompareTo(b.x);
+            if (ret == 0) return -a.y.CompareTo(b.y);
+            return ret;
         });
 
         foreach (var item in randomPoints)
