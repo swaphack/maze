@@ -69,6 +69,7 @@
     <Compile Include="Assets\CG\DelaunayVoronoi\Edge.cs" />
     <Compile Include="Assets\CG\DelaunayVoronoi\Point.cs" />
     <Compile Include="Assets\CG\DelaunayVoronoi\Polygon.cs" />
+    <Compile Include="Assets\CG\DelaunayVoronoi\PolygonEdge.cs" />
     <Compile Include="Assets\CG\DelaunayVoronoi\Triangle.cs" />
     <Compile Include="Assets\CG\DelaunayVoronoi\Voronoi.cs" />
     <Compile Include="Assets\CG\Mesh\DelaunayTriangle.cs" />

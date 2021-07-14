@@ -26,7 +26,7 @@ namespace DelaunayVoronoi
         public Point(Vector3 pos)
         {
             this.Position = pos;
-        }    
+        }
         public Point(float x, float y)
         {
             Position = new Vector3(x, y);
@@ -35,7 +35,22 @@ namespace DelaunayVoronoi
         public override string ToString()
         {
             // Simple way of seeing what's going on in the debugger when investigating weirdness
-            return $"{nameof(Point)} {_instanceId} {X:0.##}@{Y:0.##}";
+            return $"{nameof(Point)} ({X:0.##},{Y:0.##})";
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null) return false;
+            if (obj.GetType() != GetType()) return false;
+            var point = obj as Point;
+
+            return this.Position == point.Position;
+        }
+
+        public override int GetHashCode()
+        {
+            int hCode = (int)X ^ (int)Y;
+            return hCode.GetHashCode();
         }
     }
 }

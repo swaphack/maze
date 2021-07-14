@@ -137,7 +137,6 @@ public class VoronoiSample : DrawLineBehaviour
         }
 
 
-        List<Edge> allEdges = new List<Edge>();
         List<Vector3> points = new List<Vector3>();
         if (CutOffEdge)
         {
@@ -171,15 +170,11 @@ public class VoronoiSample : DrawLineBehaviour
                 {
                     points.Add(insetctPoints[0]);
                     points.Add(insetctPoints[1]);
-
-                    allEdges.Add(new Edge(insetctPoints[0], insetctPoints[1]));
                 }
                 else if (insetctPoints.Count == 1 && otherPoints.Count == 1)
                 {
                     points.Add(insetctPoints[0]);
                     points.Add(otherPoints[0]);
-
-                    allEdges.Add(new Edge(insetctPoints[0], otherPoints[0]));
                 }
                 else
                 {
@@ -191,8 +186,6 @@ public class VoronoiSample : DrawLineBehaviour
                     }
                     points.Add(edge.Point1.Position);
                     points.Add(edge.Point2.Position);
-
-                    allEdges.Add(edge);
                 }
             }
         }
@@ -202,8 +195,6 @@ public class VoronoiSample : DrawLineBehaviour
             {
                 points.Add(edge.Point1.Position);
                 points.Add(edge.Point2.Position);
-
-                allEdges.Add(edge);
             }
         }
 

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System;
-
+using System.Linq;
 using UnityEngine;
 using DelaunayVoronoi;
 
@@ -34,10 +34,42 @@ public class VoronoiPolygonSample : DrawLineBehaviour
     {
         var points = delaunay.GeneratePoints(pointCount, Width, Height);
         var triangulation = delaunay.BowyerWatson(points);
-        DrawTriangulation(triangulation);
+        //DrawTriangulation(triangulation);
 
         var vornoiEdges = voronoi.GenerateEdgesFromDelaunay(triangulation);
         DrawVoronoi(vornoiEdges);
+    }
+
+    void RemoveEdge(ref HashSet<Edge> edges, Edge edge)
+    {
+        if (edges == null || edge == null)
+        {
+            return;
+        }
+        var iter = edges.Where(o => o.Equals(edge)).ToArray();
+        if (iter != null && iter.Length > 0)
+        {
+            foreach (var item in iter)
+            {
+                edges.Remove(item);
+            }
+        }
+        else
+        {
+            Debug.LogFormat("Not exists edge {0}", edge.ToString());
+        }
+    }
+
+    void AddEdge(ref HashSet<Edge> edges, Edge edge)
+    {
+        if (edges == null || edge == null)
+        {
+            return;
+        }
+        if (edges.Where(o => o.Equals(edge)).Count() == 0)
+        {
+            edges.Add(edge);
+        }
     }
 
     void DrawVoronoi(HashSet<Edge> voronoiEdges)
@@ -83,8 +115,18 @@ public class VoronoiPolygonSample : DrawLineBehaviour
         }
 
 
-        List<Edge> allEdges = new List<Edge>();
-        HashSet<Vector3> points = new HashSet<Vector3>();
+        HashSet<Edge> allEdges = new HashSet<Edge>();
+        foreach(var item in rectEdges)
+        {
+            AddEdge(ref allEdges, item);
+        }
+
+        foreach(var item in voronoiEdges)
+        {
+            AddEdge(ref allEdges, item);
+        }
+
+        Dictionary<Edge, List<Vector3>> allIntersectPoints = new Dictionary<Edge, List<Vector3>>();
         if (CutOffEdge)
         {
             foreach (var edge in voronoiEdges)
@@ -100,7 +142,13 @@ public class VoronoiPolygonSample : DrawLineBehaviour
                         edge.Point1.Position, edge.Point2.Position,
                         ref intersectPoint))
                     {
+                        // 与边相交的点
                         insetctPoints.Add(intersectPoint);
+                        if (!allIntersectPoints.ContainsKey(item))
+                        {
+                            allIntersectPoints.Add(item, new List<Vector3>());
+                        }
+                        allIntersectPoints[item].Add(intersectPoint);
 
                         // 剔除另一端不满足的点
                         if (VertexHelper.GetPointPosition(edge.Point1.Position, item.Point1.Position, item.Point2.Position) == 1)
@@ -115,17 +163,13 @@ public class VoronoiPolygonSample : DrawLineBehaviour
                 }
                 if (insetctPoints.Count == 2)
                 {
-                    points.Add(insetctPoints[0]);
-                    points.Add(insetctPoints[1]);
-
-                    allEdges.Add(new Edge(insetctPoints[0], insetctPoints[1]));
+                    RemoveEdge(ref allEdges, edge);
+                    AddEdge(ref allEdges, new Edge(insetctPoints[0], insetctPoints[1]));
                 }
                 else if (insetctPoints.Count == 1 && otherPoints.Count == 1)
                 {
-                    points.Add(insetctPoints[0]);
-                    points.Add(otherPoints[0]);
-
-                    allEdges.Add(new Edge(insetctPoints[0], otherPoints[0]));
+                    RemoveEdge(ref allEdges, edge);
+                    AddEdge(ref allEdges, new Edge(insetctPoints[0], otherPoints[0]));
                 }
                 else
                 {
@@ -133,44 +177,95 @@ public class VoronoiPolygonSample : DrawLineBehaviour
                     if (!rect.Contains(edge.Point1.Position)
                         && !rect.Contains(edge.Point2.Position))
                     {
+                        RemoveEdge(ref allEdges, edge);
                         continue;
                     }
-                    points.Add(edge.Point1.Position);
-                    points.Add(edge.Point2.Position);
-
-                    allEdges.Add(edge);
                 }
             }
-        }
-        else
-        {
-            foreach (var edge in voronoiEdges)
+            foreach (var item in allIntersectPoints)
             {
-                points.Add(edge.Point1.Position);
-                points.Add(edge.Point2.Position);
+                List<Vector3> edgePoints = new List<Vector3>();
+                edgePoints.AddRange(item.Value);
+                edgePoints.Sort((a, b) =>
+                {
+                    int ret = a.x.CompareTo(b.x);
+                    if (ret == 0) return a.y.CompareTo(b.y);
+                    return ret;
+                });
 
-                allEdges.Add(edge);
+                Vector3 firstPoint = Vector3.zero;
+                Vector3 secondPoint = Vector3.zero;
+                if (item.Key.Point1.X < item.Key.Point2.X)
+                {
+                    firstPoint = item.Key.Point1.Position;
+                    secondPoint = item.Key.Point2.Position;
+                }
+                else if (item.Key.Point1.Y < item.Key.Point2.Y)
+                {
+                    firstPoint = item.Key.Point1.Position;
+                    secondPoint = item.Key.Point2.Position;
+                }
+                else
+                {
+                    firstPoint = item.Key.Point2.Position;
+                    secondPoint = item.Key.Point1.Position;
+                }
+                if (!edgePoints.Contains(firstPoint))
+                {
+                    edgePoints.Insert(0, firstPoint);
+                }
+                if (!edgePoints.Contains(secondPoint))
+                {
+                    edgePoints.Add(secondPoint);
+                }
+                for (int i = 0; i < edgePoints.Count - 1; i++)
+                {
+                    AddEdge(ref allEdges, new Edge(edgePoints[i], edgePoints[i + 1]));
+                }
+                RemoveEdge(ref allEdges, item.Key);
             }
         }
 
-        points.Add(new Vector2(0, 0));
-        points.Add(new Vector2(Width, 0));
-        points.Add(new Vector2(Width, Height));
-        points.Add(new Vector2(0, Height));
+        List<Vector3> drawPoints = new List<Vector3>();
+        foreach(var item in allEdges)
+        {
+            drawPoints.Add(item.Point1.Position);
+            drawPoints.Add(item.Point2.Position);
+        }
 
-        List<Vector3> sortPoints = new List<Vector3>();
-        sortPoints.AddRange(points);
+        this.SetPoints(drawPoints);
 
-        sortPoints.Sort((a, b) => {
-            int ret = a.x.CompareTo(b.x);
-            if (ret == 0) return -a.y.CompareTo(b.y);
-            return ret;
-        });
+        HashSet<Vector3> sortPoints = new HashSet<Vector3>();
+        foreach(var item in drawPoints)
+        {
+            sortPoints.Add(item);
+        }
+        foreach (var item in sortPoints)
+        {
+            var cube = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            cube.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
+            cube.transform.position = item + this.transform.localPosition;
+            cube.transform.SetParent(this.transform);
+        }
 
         // 从左下角开始查找
+        Dictionary<Edge, PolygonEdge> polygonEdges = PolygonEdge.CreatePolygonEdges(allEdges);
+        if (polygonEdges == null || polygonEdges.Count == 0)
+        {
+            return;
+        }
+
         HashSet<Polygon> polygons = new HashSet<Polygon>();
+        foreach(var item in polygonEdges)
+        {
+            var polygon = PolygonEdge.GetConvexPolygon(item.Value);
+            if (polygon != null)
+            {
+                polygons.Add(polygon);
+            }
+        }
 
-
+        DrawPolygon(polygons);
     }
 
     void DrawTriangulation(IEnumerable<Triangle> triangulation)
@@ -206,7 +301,7 @@ public class VoronoiPolygonSample : DrawLineBehaviour
         foreach (var item in voronoiPolygons)
         {
             var convexHullPoints = item.GetConvexHull();
-            if (convexHullPoints != null && convexHullPoints.Length > 3)
+            if (convexHullPoints != null && convexHullPoints.Length >= 3)
             {
                 int[] polygonIndices = new int[convexHullPoints.Length];
                 for (int i = 0; i < convexHullPoints.Length; i++)

@@ -25,45 +25,78 @@ namespace DelaunayVoronoi
             if (obj.GetType() != GetType()) return false;
             var edge = obj as Edge;
 
-            var samePoints = Point1 == edge.Point1 && Point2 == edge.Point2;
-            var samePointsReversed = Point1 == edge.Point2 && Point2 == edge.Point1;
+            var samePoints = Point1.Equals(edge.Point1) && Point2.Equals(edge.Point2);
+            var samePointsReversed = Point1.Equals(edge.Point2) && Point2.Equals(edge.Point1);
             return samePoints || samePointsReversed;
         }
 
-        /// <summary>
-        /// 是否相接
-        /// </summary>
-        /// <param name="edge"></param>
-        /// <returns></returns>
-        public bool IsLinkWithDirection(Edge edge)
-        {
-            if (edge == null) return false;
-
-            return Point2 == edge.Point1 && Point1 != edge.Point2;
-        }
-
-        public bool IsLinkTo(Edge edge)
-        {
-            if (edge == null) return false;
-
-            var a = Point2 == edge.Point1 && Point1 != edge.Point2;
-            var b = Point1 == edge.Point2 && Point2 != edge.Point1;
-
-            return a || b;
-        }
 
         public Vector3 GetDirection(Point destPoint)
         {
-            if (Point1 == destPoint) return Point1.Position - Point2.Position;
-            else if (Point2 == destPoint) return Point2.Position - Point1.Position;
+            if (Point1.Equals(destPoint)) return Point1.Position - Point2.Position;
+            else if (Point2.Equals(destPoint)) return Point2.Position - Point1.Position;
 
             return Vector3.zero;
         }
 
+        /// <summary>
+        /// 获取另一个端点
+        /// </summary>
+        /// <param name="onePoint"></param>
+        /// <returns></returns>
+        public Point GetOtherPoint(Point onePoint)
+        {
+            if (Point1.Equals(onePoint))
+            {
+                return Point2;
+            }
+            else if (Point2.Equals(onePoint))
+            {
+                return Point1;
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// 获取共端点另一个不相同的点
+        /// </summary>
+        /// <param name="edge"></param>
+        /// <returns></returns>
+        public Point GetOtherPointWithSharedPoint(Edge edge)
+        {
+            var point = GetSharedPoint(edge);
+            if (point == null) return null;
+            return GetOtherPoint(point);
+        }
+
+        /// <summary>
+        /// 查找共点
+        /// </summary>
+        /// <param name="edge"></param>
+        /// <returns></returns>
+        public Point GetSharedPoint(Edge edge)
+        {
+            if (edge == null) return null;
+            if (this.Point1.Equals(edge.Point1) || this.Point1.Equals(edge.Point2))
+            {
+                return this.Point1;
+            }
+            if (this.Point2.Equals(edge.Point1) || this.Point2.Equals(edge.Point2))
+            {
+                return this.Point2;
+            }
+            return null;
+        }
+
         public override int GetHashCode()
         {
-            int hCode = (int)Point1.X ^ (int)Point1.Y ^ (int)Point2.X ^ (int)Point2.Y;
+            int hCode = Point1.GetHashCode()^Point2.GetHashCode();
             return hCode.GetHashCode();
+        }
+
+        public override string ToString()
+        {
+            return $"{nameof(Edge)} {Point1:#}-{Point2:#}";
         }
     }
 }

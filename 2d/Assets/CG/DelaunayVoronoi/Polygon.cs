@@ -19,14 +19,14 @@ namespace DelaunayVoronoi
         {
             if (point == null) return false;
 
-            return Points.Where(o => o == point) != null;
+            return Points.Where(o => o == point).Count() != 0;
         }
 
         public bool Contains(Edge edge)
         {
             if (edge == null) return false;
 
-            return Edges.Where(o => o.Equals(edge)) != null;
+            return Edges.Where(o => o.Equals(edge)).Count() != 0;
         }
 
         public void Add(Edge edge)
@@ -61,6 +61,17 @@ namespace DelaunayVoronoi
             }
 
             return ConvexHull.GetConvexHull(points.ToArray());
+        }
+
+        public Vector3[] GetPositions()
+        {
+            List<Vector3> points = new List<Vector3>();
+            foreach (var item in this.Points)
+            {
+                points.Add(item.Position);
+            }
+
+            return points.ToArray();
         }
     }
 }
